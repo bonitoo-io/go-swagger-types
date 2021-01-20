@@ -1,5 +1,5 @@
 # Generated code analysis
-This document describes possible ways how to get server API types and request/response handling code
+This document describes possible ways how to get server API types and request/response handling code for Go client.
 
 ## Swagger generators
 
