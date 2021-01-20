@@ -1,0 +1,660 @@
+openapi: 3.0.0
+info:
+  title: Influx API Service
+  version: 0.1.0
+servers:
+- url: /api/v2
+paths:
+  /authorizations:
+    get:
+      operationId: GetAuthorizations
+      parameters:
+      - description: OpenTracing span context
+        example:
+          trace_id: "1"
+          span_id: "1"
+          baggage:
+            key: value
+        explode: false
+        in: header
+        name: Zap-Trace-Span
+        required: false
+        schema:
+          type: string
+        style: simple
+      - description: Only show authorizations that belong to a user ID.
+        explode: true
+        in: query
+        name: userID
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Only show authorizations that belong to a user name.
+        explode: true
+        in: query
+        name: user
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Only show authorizations that belong to an organization ID.
+        explode: true
+        in: query
+        name: orgID
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Only show authorizations that belong to a organization name.
+        explode: true
+        in: query
+        name: org
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authorizations'
+          description: A list of authorizations
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: List all authorizations
+      tags:
+      - Authorizations
+    post:
+      operationId: PostAuthorizations
+      parameters:
+      - description: OpenTracing span context
+        example:
+          trace_id: "1"
+          span_id: "1"
+          baggage:
+            key: value
+        explode: false
+        in: header
+        name: Zap-Trace-Span
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+        description: Authorization to create
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+          description: Authorization created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: Create an authorization
+      tags:
+      - Authorizations
+  /authorizations/{authID}:
+    delete:
+      operationId: DeleteAuthorizationsID
+      parameters:
+      - description: OpenTracing span context
+        example:
+          trace_id: "1"
+          span_id: "1"
+          baggage:
+            key: value
+        explode: false
+        in: header
+        name: Zap-Trace-Span
+        required: false
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the authorization to delete.
+        explode: false
+        in: path
+        name: authID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Authorization deleted
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: Delete a authorization
+      tags:
+      - Authorizations
+    get:
+      operationId: GetAuthorizationsID
+      parameters:
+      - description: OpenTracing span context
+        example:
+          trace_id: "1"
+          span_id: "1"
+          baggage:
+            key: value
+        explode: false
+        in: header
+        name: Zap-Trace-Span
+        required: false
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the authorization to get.
+        explode: false
+        in: path
+        name: authID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+          description: Authorization details
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: Retrieve an authorization
+      tags:
+      - Authorizations
+    patch:
+      operationId: PatchAuthorizationsID
+      parameters:
+      - description: OpenTracing span context
+        example:
+          trace_id: "1"
+          span_id: "1"
+          baggage:
+            key: value
+        explode: false
+        in: header
+        name: Zap-Trace-Span
+        required: false
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the authorization to update.
+        explode: false
+        in: path
+        name: authID
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationUpdateRequest'
+        description: Authorization to update
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+          description: The active or inactie authorization
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: Update an authorization to be active or inactive
+      tags:
+      - Authorizations
+  /health:
+    get:
+      operationId: GetHealth
+      parameters:
+      - description: OpenTracing span context
+        example:
+          trace_id: "1"
+          span_id: "1"
+          baggage:
+            key: value
+        explode: false
+        in: header
+        name: Zap-Trace-Span
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+          description: The instance is healthy
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+          description: The instance is unhealthy
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: Get the health of an instance
+      tags:
+      - Health
+    servers:
+    - url: /
+components:
+  parameters:
+    Offset:
+      explode: true
+      in: query
+      name: offset
+      required: false
+      schema:
+        minimum: 0
+        type: integer
+      style: form
+    Limit:
+      explode: true
+      in: query
+      name: limit
+      required: false
+      schema:
+        default: 20
+        maximum: 100
+        minimum: 1
+        type: integer
+      style: form
+    Descending:
+      explode: true
+      in: query
+      name: descending
+      required: false
+      schema:
+        default: false
+        type: boolean
+      style: form
+    SortBy:
+      explode: true
+      in: query
+      name: sortBy
+      required: false
+      schema:
+        type: string
+      style: form
+    TraceSpan:
+      description: OpenTracing span context
+      example:
+        trace_id: "1"
+        span_id: "1"
+        baggage:
+          key: value
+      explode: false
+      in: header
+      name: Zap-Trace-Span
+      required: false
+      schema:
+        type: string
+      style: simple
+  schemas:
+    Permission:
+      properties:
+        action:
+          enum:
+          - read
+          - write
+          type: string
+        resource:
+          $ref: '#/components/schemas/Resource'
+      required:
+      - action
+      - resource
+    AuthorizationUpdateRequest:
+      example:
+        description: description
+        status: active
+      properties:
+        status:
+          default: active
+          description: If inactive the token is inactive and requests using the token
+            will be rejected.
+          enum:
+          - active
+          - inactive
+          type: string
+        description:
+          description: A description of the token.
+          type: string
+    Authorization:
+      allOf:
+      - $ref: '#/components/schemas/AuthorizationUpdateRequest'
+      - $ref: '#/components/schemas/Authorization_allOf'
+      required:
+      - orgID
+      - permissions
+    Authorizations:
+      example:
+        authorizations:
+        - null
+        - null
+        links:
+          next: https://openapi-generator.tech
+          prev: https://openapi-generator.tech
+          self: https://openapi-generator.tech
+      properties:
+        links:
+          $ref: '#/components/schemas/Links'
+        authorizations:
+          items:
+            $ref: '#/components/schemas/Authorization'
+          type: array
+      type: object
+    Error:
+      properties:
+        code:
+          description: Code is the machine-readable error code.
+          enum:
+          - internal error
+          - not found
+          - conflict
+          - invalid
+          - unprocessable entity
+          - empty value
+          - unavailable
+          - forbidden
+          - too many requests
+          - unauthorized
+          - method not allowed
+          readOnly: true
+          type: string
+        message:
+          description: Message is a human-readable message.
+          readOnly: true
+          type: string
+      required:
+      - code
+      - message
+    Link:
+      description: URI of resource.
+      format: uri
+      readOnly: true
+      type: string
+    Links:
+      example:
+        next: https://openapi-generator.tech
+        prev: https://openapi-generator.tech
+        self: https://openapi-generator.tech
+      properties:
+        next:
+          description: URI of resource.
+          format: uri
+          readOnly: true
+          type: string
+        self:
+          description: URI of resource.
+          format: uri
+          readOnly: true
+          type: string
+        prev:
+          description: URI of resource.
+          format: uri
+          readOnly: true
+          type: string
+      required:
+      - self
+      type: object
+    Dialect:
+      description: Dialect are options to change the default CSV output format; https://www.w3.org/TR/2015/REC-tabular-metadata-20151217/#dialect-descriptions
+      properties:
+        header:
+          default: true
+          description: If true, the results will contain a header row
+          type: boolean
+        delimiter:
+          default: ','
+          description: Separator between cells; the default is ,
+          maxLength: 1
+          minLength: 1
+          type: string
+        annotations:
+          description: Https://www.w3.org/TR/2015/REC-tabular-data-model-20151217/#columns
+          items:
+            enum:
+            - group
+            - datatype
+            - default
+            type: string
+            uniqueItems: true
+          type: array
+        commentPrefix:
+          default: '#'
+          description: Character prefixed to comment strings
+          maxLength: 1
+          minLength: 0
+          type: string
+        dateTimeFormat:
+          default: RFC3339
+          description: Format of timestamps
+          enum:
+          - RFC3339
+          - RFC3339Nano
+          type: string
+      type: object
+    Resource:
+      properties:
+        type:
+          enum:
+          - authorizations
+          - buckets
+          - dashboards
+          - orgs
+          - sources
+          - tasks
+          - telegrafs
+          - users
+          - variables
+          - scrapers
+          - secrets
+          - labels
+          - views
+          - documents
+          - notificationRules
+          - notificationEndpoints
+          - checks
+          type: string
+        id:
+          description: If ID is set that is a permission for a specific resource.
+            if it is not set it is a permission for all resources of that resource
+            type.
+          nullable: true
+          type: string
+        name:
+          description: Optional name of the resource if the resource has a name field.
+          nullable: true
+          type: string
+        orgID:
+          description: If orgID is set that is a permission for all resources owned
+            my that org. if it is not set it is a permission for all resources of
+            that resource type.
+          nullable: true
+          type: string
+        org:
+          description: Optional name of the organization of the organization with
+            orgID.
+          nullable: true
+          type: string
+      required:
+      - type
+      type: object
+    ThresholdBase:
+      properties:
+        level:
+          $ref: '#/components/schemas/CheckStatusLevel'
+        allValues:
+          description: If true, only alert if all values meet threshold.
+          type: boolean
+    CheckStatusLevel:
+      description: The state to record if check matches a criteria.
+      enum:
+      - UNKNOWN
+      - OK
+      - INFO
+      - CRIT
+      - WARN
+      type: string
+    Pkg:
+      items:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            enum:
+            - Bucket
+            - CheckDeadman
+            - CheckThreshold
+            - Dashboard
+            - Label
+            - NotificationEndpointHTTP
+            - NotificationEndpointPagerDuty
+            - NotificationEndpointSlack
+            - NotificationRule
+            - Task
+            - Telegraf
+            - Variable
+            type: string
+          meta:
+            properties:
+              name:
+                type: string
+            type: object
+          spec:
+            type: object
+        type: object
+      type: array
+    HealthCheck:
+      example:
+        checks:
+        - null
+        - null
+        name: name
+        message: message
+        status: pass
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        checks:
+          items:
+            $ref: '#/components/schemas/HealthCheck'
+          type: array
+        status:
+          enum:
+          - pass
+          - fail
+          type: string
+      required:
+      - name
+      - status
+      type: object
+    Authorization_allOf_links:
+      example:
+        self: /api/v2/authorizations/1
+        user: /api/v2/users/12
+      properties:
+        self:
+          description: URI of resource.
+          format: uri
+          readOnly: true
+          type: string
+        user:
+          description: URI of resource.
+          format: uri
+          readOnly: true
+          type: string
+      readOnly: true
+      type: object
+    Authorization_allOf:
+      properties:
+        createdAt:
+          format: date-time
+          readOnly: true
+          type: string
+        updatedAt:
+          format: date-time
+          readOnly: true
+          type: string
+        orgID:
+          description: ID of org that authorization is scoped to.
+          type: string
+        permissions:
+          description: List of permissions for an auth.  An auth must have at least
+            one Permission.
+          items:
+            $ref: '#/components/schemas/Permission'
+          minLength: 1
+          type: array
+        id:
+          readOnly: true
+          type: string
+        token:
+          description: Passed via the Authorization Header and Token Authentication
+            type.
+          readOnly: true
+          type: string
+        userID:
+          description: ID of user that created and owns the token.
+          readOnly: true
+          type: string
+        user:
+          description: Name of user that created and owns the token.
+          readOnly: true
+          type: string
+        org:
+          description: Name of the org token is scoped to.
+          readOnly: true
+          type: string
+        links:
+          $ref: '#/components/schemas/Authorization_allOf_links'
+      type: object
+  securitySchemes:
+    BasicAuth:
+      scheme: basic
+      type: http
